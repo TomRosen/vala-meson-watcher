@@ -1,0 +1,14 @@
+{
+  "name": "vala-meson-watcher",
+  "version": "0.1.0",
+  "description": "Automatically add Vala files to meson.build",
+  "main": "src/main.js",
+  "scripts": {
+    "run": "node src/main.js -d ./src"
+  },
+  "bin": {
+    "vmw": "src/main.js"
+  },
+  "author": "Tom Rosen",
+  "license": "ISC"
+}
