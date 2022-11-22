@@ -9,6 +9,7 @@ let dir = './src';
 let mesonFilePath = './meson.build';
 let includeExtensions = ['.vala'];
 let runOnStart = false;
+let checkSubDirs = true;
 
 let arg;
 let argIndex = 2;
@@ -39,6 +40,14 @@ while ((arg = process.argv[argIndex])) {
 				runOnStart = process.argv[++argIndex].toLowerCase() === 'true';
 			} else {
 				runOnStart = true;
+			}
+			break;
+		case '--subdir':
+			if (
+				process.argv[argIndex + 1]?.toLowerCase === 'true' ||
+				process.argv[argIndex + 1]?.toLowerCase === 'false'
+			) {
+				checkSubDirs = process.argv[++argIndex].toLowerCase() === 'true';
 			}
 			break;
 		case '-h':
@@ -141,7 +150,11 @@ function getAllFilesFromDir(path) {
 	const filesInDir = () => {
 		files = fs.readdirSync(path, { withFileTypes: true });
 		files.forEach((file) => {
-			if (file.isDirectory() && !fileWatchers.has(path + '/' + file.name)) {
+			if (
+				file.isDirectory() &&
+				checkSubDirs &&
+				!fileWatchers.has(path + '/' + file.name)
+			) {
 				addWatcher(path + '/' + file.name);
 				getAllFilesFromDir(path + '/' + file.name);
 			} else {
