@@ -7,8 +7,11 @@
     "run": "node src/main.js -d ./src"
   },
   "bin": {
-    "vmw": "src/main.js"
+    "vmw": "bin/vmw"
   },
   "author": "Tom Rosen",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
 }
