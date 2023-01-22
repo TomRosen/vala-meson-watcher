@@ -46,7 +46,7 @@ vala-meson-watcher [options]
 ## Examples
 
 ```
-vala-meson-watcher -d /path/to/src -m /path/to/meson build -i .vala,.c
+vala-meson-watcher -d /path/to/src -m /path/to/meson.build -i .vala,.c
 ```
 
 This command will watch the directory `/path/to/src` for changes, and when it detects changes it will add the new files to the meson build file located at `/path/to/meson.build`. It will only include files with extensions `.vala` and `.c`.
