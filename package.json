@@ -4,7 +4,8 @@
   "description": "Automatically add Vala files to meson.build",
   "main": "src/main.js",
   "scripts": {
-    "run": "node src/main.js -d ./src"
+    "run": "node src/main.js -d ./src",
+    "build": "tsc --build ./src/tsconfig.json"
   },
   "bin": {
     "vmw": "bin/vmw"
