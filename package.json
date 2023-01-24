@@ -1,6 +1,6 @@
 {
   "name": "vala-meson-watcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Automatically add Vala files to meson.build",
   "main": "src/main.js",
   "scripts": {

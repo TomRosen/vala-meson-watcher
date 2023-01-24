@@ -60,7 +60,7 @@ while ((arg = process.argv[argIndex])) {
             break;
         case "-v":
         case "--version":
-            console.log("vala-meson-watcher v0.1.0");
+            console.log("vala-meson-watcher v0.1.1");
             process.exit(0);
             break;
         default:
