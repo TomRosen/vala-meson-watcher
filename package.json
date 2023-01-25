@@ -2,6 +2,10 @@
   "name": "vala-meson-watcher",
   "version": "0.1.1",
   "description": "Automatically add Vala files to meson.build",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomrosen/vala-meson-watcher.git"
+  },
   "main": "src/main.js",
   "scripts": {
     "run": "node src/main.js -d ./src",
@@ -12,6 +16,11 @@
   },
   "author": "Tom Rosen",
   "license": "ISC",
+  "keywords": [
+    "vala",
+    "meson",
+    "watcher"
+  ],
   "devDependencies": {
     "@types/node": "^18.11.9"
   }
