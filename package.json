@@ -1,6 +1,6 @@
 {
   "name": "vala-meson-watcher",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Automatically add Vala files to meson.build",
   "repository": {
     "type": "git",
