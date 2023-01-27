@@ -1,5 +1,5 @@
 "use strict";
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 let fileStructure = new Map();
@@ -9,6 +9,7 @@ let mesonFilePath = "./meson.build";
 let includeExtensions = [".vala"];
 let runOnStart = false;
 let checkSubDirs = true;
+let logging = true;
 let arg;
 let argIndex = 2;
 while ((arg = process.argv[argIndex])) {
@@ -27,7 +28,7 @@ while ((arg = process.argv[argIndex])) {
                 includeExtensions.push(...process.argv[++argIndex].split(","));
             }
             else {
-                console.error("Include extensions must start with a dot");
+                console.error("\u001B[31m%s\u001B[0m" /* LogType.red */, "Include extensions must start with a dot");
                 process.exit(1);
             }
             break;
@@ -46,6 +47,12 @@ while ((arg = process.argv[argIndex])) {
                 checkSubDirs = process.argv[++argIndex].toLowerCase() === "true";
             }
             break;
+        case "--log":
+            if (((_e = process.argv[argIndex + 1]) === null || _e === void 0 ? void 0 : _e.toLowerCase()) === "true" ||
+                ((_f = process.argv[argIndex + 1]) === null || _f === void 0 ? void 0 : _f.toLowerCase()) === "false") {
+                logging = process.argv[++argIndex].toLowerCase() === "true";
+            }
+            break;
         case "-h":
         case "--help":
             console.log("Usage: vala-meson-watcher [options]");
@@ -53,24 +60,28 @@ while ((arg = process.argv[argIndex])) {
             console.log("-d, --dir <path>        Directory to watch for changes");
             console.log("-m, --meson <path>      Path to meson.build file");
             console.log("-i, --include <ext>     File extensions to include in meson.build");
-            console.log("--ros                   Run on start");
+            console.log("--ros                   Change sources in Meson file when starting the tool (default: false)");
+            console.log("--subdir                Include subdirectories (default: true)");
+            console.log("--log                   Enable logging (default: true)");
             console.log("-v, --version           Print version");
             console.log("-h, --help              Display this help message");
             process.exit(0);
-            break;
         case "-v":
         case "--version":
-            console.log("vala-meson-watcher v0.1.1");
+            console.log("vala-meson-watcher v0.1.2");
             process.exit(0);
-            break;
         default:
-            console.error("Unknown argument: " + arg);
+            console.error("\u001B[31m%s\u001B[0m" /* LogType.red */, "Unknown argument: " + arg);
             break;
     }
     argIndex++;
 }
+function log(message, type = "" /* LogType.default */) {
+    if (logging)
+        console.log(type, message);
+}
 if (!fs.existsSync(mesonFilePath)) {
-    console.error("Meson build file not found");
+    console.error("\u001B[31m%s\u001B[0m" /* LogType.red */, "Meson build file not found");
     process.exit(1);
 }
 addWatcher(dir);
@@ -79,9 +90,9 @@ if (runOnStart)
     updateMeson();
 //watch for changes in the directory
 function addWatcher(path) {
-    console.log("Watching: " + path);
+    log(`Watching ${path}`);
     let watcher = fs.watch(path || "./src", (eventType, filename) => {
-        console.log(`${eventType} event occurred on ${filename}`);
+        log(`${eventType} event occurred on ${filename}`);
         getAllFilesFromDir(path || "./src");
         updateMeson();
     });
@@ -101,7 +112,7 @@ function stripPrefix(str) {
 function fileStructureToString() {
     let str = "";
     for (let [key, value] of fileStructure) {
-        let formattedKey = "'" + stripPrefix(key).replace(/\//g, "' / '") + "'";
+        let formattedKey = `'${stripPrefix(key).replace(/\//g, "' / '")}'`;
         for (let i = 0; i < value.length; i++) {
             str += formattedKey + " / " + `'${value[i]}'` + ",\n";
         }
@@ -113,7 +124,7 @@ function updateMeson() {
     let anchorTop = mesonBuildFile.indexOf("#vmw-anchor-top");
     let anchorBottom = mesonBuildFile.indexOf("#vmw-anchor-bottom");
     if (anchorTop === -1 || anchorBottom === -1) {
-        console.error("Meson build file does not contain anchor");
+        console.error("\u001B[31m%s\u001B[0m" /* LogType.red */, "Meson build file does not contain anchor");
         return;
     }
     //remove everything between the top & bottom anchor
@@ -123,10 +134,7 @@ function updateMeson() {
     let fileString = fileStructureToString();
     anchorTop = mesonBuildFileWithoutAnchor.indexOf("#vmw-anchor-top");
     anchorBottom = mesonBuildFileWithoutAnchor.indexOf("#vmw-anchor-bottom");
-    let mesonBuildFileWithNewFiles = mesonBuildFileWithoutAnchor.slice(0, anchorTop + "#vmw-anchor-top".length) +
-        "\n" +
-        fileString +
-        mesonBuildFileWithoutAnchor.slice(anchorBottom);
+    let mesonBuildFileWithNewFiles = `${mesonBuildFileWithoutAnchor.slice(0, anchorTop + "#vmw-anchor-top".length)}\n${fileString}${mesonBuildFileWithoutAnchor.slice(anchorBottom)}`;
     fs.writeFileSync("./meson.build", mesonBuildFileWithNewFiles);
 }
 function getAllFilesFromDir(path) {
@@ -136,11 +144,11 @@ function getAllFilesFromDir(path) {
         if (file.isDirectory() &&
             checkSubDirs &&
             !fileWatchers.has(path + "/" + file.name)) {
-            addWatcher(path + "/" + file.name);
-            getAllFilesFromDir(path + "/" + file.name);
+            addWatcher(`${path}/${file.name}`);
+            getAllFilesFromDir(`${path}/${file.name}`);
         }
         else {
-            if (includeExtensions.includes("." + file.name.split(".").pop())) {
+            if (includeExtensions.includes(`.${file.name.split(".").pop()}`)) {
                 fileStructure.get(path).push(file.name);
             }
         }
@@ -148,9 +156,9 @@ function getAllFilesFromDir(path) {
 }
 //cleanup watch on close
 process.on("SIGINT", () => {
-    console.log("Closing...");
+    log("Closing...");
     fileWatchers.forEach((watcher, path) => {
-        console.log("Closing watcher: " + path);
+        log(`Closing watcher: ${path}`);
         watcher.close();
     });
     process.exit();

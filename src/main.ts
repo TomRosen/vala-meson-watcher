@@ -57,6 +57,14 @@ while ((arg = process.argv[argIndex])) {
         checkSubDirs = process.argv[++argIndex].toLowerCase() === "true";
       }
       break;
+    case "--log":
+      if (
+        process.argv[argIndex + 1]?.toLowerCase() === "true" ||
+        process.argv[argIndex + 1]?.toLowerCase() === "false"
+      ) {
+        logging = process.argv[++argIndex].toLowerCase() === "true";
+      }
+      break;
     case "-h":
     case "--help":
       console.log("Usage: vala-meson-watcher [options]");
@@ -66,13 +74,19 @@ while ((arg = process.argv[argIndex])) {
       console.log(
         "-i, --include <ext>     File extensions to include in meson.build"
       );
-      console.log("--ros                   Run on start");
+      console.log(
+        "--ros                   Change sources in Meson file when starting the tool (default: false)"
+      );
+      console.log(
+        "--subdir                Include subdirectories (default: true)"
+      );
+      console.log("--log                   Enable logging (default: true)");
       console.log("-v, --version           Print version");
       console.log("-h, --help              Display this help message");
       process.exit(0);
     case "-v":
     case "--version":
-      console.log("vala-meson-watcher v0.1.1");
+      console.log("vala-meson-watcher v0.1.2");
       process.exit(0);
     default:
       console.error(LogType.red, "Unknown argument: " + arg);

@@ -1,6 +1,6 @@
 # vala-meson-watcher
 
-A tool that automatically looks for files in a directory and adds them as sources to the meson build file.
+A tool that automatically looks for source files in a directory and adds them as sources to the `meson.build` file.
 
 <!--toc:start-->
 
@@ -32,10 +32,12 @@ vala-meson-watcher [options]
 
 ## Options
 
-- `-d, --dir <path>`: Directory to watch for changes
-- `-m, --meson <path>`: Path to meson.build file
-- `-i, --include <ext>`: File extensions to include in meson.build (extensions must start with a dot)
-- `--ros`: Run on start
+- `-d, --dir <path>`: Directory to watch for changes. Default `./src`
+- `-m, --meson <path>`: Path to meson.build file. Default `./meson.build`
+- `-i, --include <ext>`: File extensions to include in meson.build (extensions must start with a dot). Default `.vala`
+- `--ros`: Change sources in Meson file when starting the tool. Default: `false`
+- `--subdir`: Include subdirectories. Default `true`
+- `--log`: Enable logging. Default: `true`
 - `-v, --version`: Print version
 - `-h, --help`: Display this help message
 
@@ -60,4 +62,5 @@ This command will watch the default directory `./src` for changes, and when it d
 
 ## Note
 
-This tool is designed to work with vala projects, but it can also be used with other projects with the correct configuration.
+- This tool is designed to work with vala projects, but it can also be used with other projects with the correct configuration.
+- The script uses the `fs.watch` method of the `fs` module, which is not supported on all platforms.
