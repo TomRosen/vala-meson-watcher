@@ -68,7 +68,7 @@ while ((arg = process.argv[argIndex])) {
             process.exit(0);
         case "-v":
         case "--version":
-            console.log("vala-meson-watcher v0.1.2");
+            console.log("vala-meson-watcher v0.2.0");
             process.exit(0);
         default:
             console.error("\u001B[31m%s\u001B[0m" /* LogType.red */, "Unknown argument: " + arg);
